@@ -1,93 +1,86 @@
 [![WordPress tested 5.8](https://img.shields.io/badge/WordPress-v5.8%20tested-0073aa.svg)](https://wordpress.org/plugins/bh-wc-change-order-payment-gateway) [![PHPCS WPCS](https://img.shields.io/badge/PHPCS-WordPress%20Coding%20Standards-8892BF.svg)](https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards) [![PHPUnit ](.github/coverage.svg)](https://brianhenryie.github.io/bh-wc-change-order-payment-gateway/)
 
-# BH WC Change Order Payment Gateway
+# Change Order Payment Gateway
 
-## Contributing
+_Just click the edit icon beside "Billing"_ – The functionality of this plugin is mostly already in core. 
 
-Clone this repo, open PhpStorm, then run `composer install` to install the dependencies.
+When I started to write this, I didn't know that the payment gateway could easily be changed already. I continued to write this because I was learning how to use Backbone.js with WooCommerce. This should serve as simple example of how to use the already available Backbone.js library with WooCommerce.
 
-```
-git clone https://github.com/brianhenryie/bh-wc-change-order-payment-gateway.git;
-open -a PhpStorm ./;
-composer install;
-```
+This simple task; Given a completed order with payment method set to Bank Transfer, add the ability to change the order's payment gateway to Cheque.
 
-For integration and acceptance tests, a local webserver must be running with `localhost:8080/bh-wc-change-order-payment-gateway/` pointing at the root of the repo. MySQL must also be running locally – with two databases set up with:
+## Setup
 
 ```
-mysql_username="root"
-mysql_password="secret"
+wp wc payment_gateway update bacs --enabled=true
+wp wc payment_gateway update cheque --enabled=true
 
-# export PATH=${PATH}:/usr/local/mysql/bin
-
-# Make .env available 
-# Bash:
-export $(grep -v '^#' .env.testing | xargs)
-# Zsh:
-source .env.testing
-
-# Create the database user:
-# MySQL
-mysql -u $mysql_username -p$mysql_password -e "CREATE USER '"$TEST_DB_USER"'@'%' IDENTIFIED WITH mysql_native_password BY '"$TEST_DB_PASSWORD"';";
-# MariaDB
-mysql -u $mysql_username -p$mysql_password -e "CREATE USER '"$TEST_DB_USER"'@'%' IDENTIFIED BY '"$TEST_DB_PASSWORD"';";
-
-# Create the databases:
-mysql -u $mysql_username -p$mysql_password -e "CREATE DATABASE "$TEST_SITE_DB_NAME"; USE "$TEST_SITE_DB_NAME"; GRANT ALL PRIVILEGES ON "$TEST_SITE_DB_NAME".* TO '"$TEST_DB_USER"'@'%';";
-mysql -u $mysql_username -p$mysql_password -e "CREATE DATABASE "$TEST_DB_NAME"; USE "$TEST_DB_NAME"; GRANT ALL PRIVILEGES ON "$TEST_DB_NAME".* TO '"$TEST_DB_USER"'@'%';";
-
-# Import the WordPress database:
-mysql -u $mysql_username -p$mysql_password $TEST_SITE_DB_NAME < tests/_data/dump.sql
+wp wc shop_order create --payment_method=bacs --set_paid=true
 ```
 
-### WordPress Coding Standards
-
-See documentation on [WordPress.org](https://make.wordpress.org/core/handbook/best-practices/coding-standards/) and [GitHub.com](https://github.com/WordPress/WordPress-Coding-Standards).
-
-Correct errors where possible and list the remaining with:
+Gives:
 
 ```
-vendor/bin/phpcbf; vendor/bin/phpcs
-```
-
-### Tests
-
-Tests use the [Codeception](https://codeception.com/) add-on [WP-Browser](https://github.com/lucatume/wp-browser) and include vanilla PHPUnit tests with [WP_Mock](https://github.com/10up/wp_mock). 
-
-Run tests with:
-
-```
-vendor/bin/codecept run unit;
-vendor/bin/codecept run wpunit;
-vendor/bin/codecept run integration;
-vendor/bin/codecept run acceptance;
-```
-
-Show code coverage (unit+wpunit):
-
-```
-XDEBUG_MODE=coverage composer run-script coverage-tests 
-```
-
-```
-vendor/bin/phpstan analyse --memory-limit 1G
-```
-
-To save changes made to the acceptance database:
-
-```
-export $(grep -v '^#' .env.testing | xargs)
-mysqldump -u $TEST_SITE_DB_USER -p$TEST_SITE_DB_PASSWORD $TEST_SITE_DB_NAME > tests/_data/dump.sql
-```
-
-To clear Codeception cache after moving/removing test files:
++---------+-------------------------------+------------------------+
+| post_id | meta_key                      | meta_value             |
++---------+-------------------------------+------------------------+
+| 15      | _order_key                    | wc_order_5kZM296ri3yn1 |
+| 15      | _customer_user                | 0                      |
+| 15      | _payment_method               | bacs                   |
+| 15      | _created_via                  | rest-api               |
+| 15      | _order_currency               | USD                    |
+| 15      | _cart_discount                | 0                      |
+| 15      | _cart_discount_tax            | 0                      |
+| 15      | _order_shipping               | 0                      |
+| 15      | _order_shipping_tax           | 0                      |
+| 15      | _order_tax                    | 0                      |
+| 15      | _order_total                  | 0.00                   |
+| 15      | _order_version                | 5.9.0                  |
+| 15      | _prices_include_tax           | no                     |
+| 15      | _billing_address_index        |                        |
+| 15      | _shipping_address_index       |                        |
+| 15      | _date_completed               | 1637789636             |
+| 15      | _date_paid                    | 1637789636             |
+| 15      | _paid_date                    | 2021-11-24 21:33:56    |
+| 15      | _completed_date               | 2021-11-24 21:33:56    |
+| 15      | _download_permissions_granted | yes                    |
+| 15      | _recorded_sales               | yes                    |
+| 15      | _recorded_coupon_usage_counts | yes                    |
+| 15      | _order_stock_reduced          | yes                    |
+| 15      | _new_order_email_sent         | true                   |
+| 15      | _edit_lock                    | 1637791818:1           |
++---------+-------------------------------+------------------------+
 
 ```
-vendor/bin/codecept clean
+![Order View](./assets/order-view.png "The admin order view for a created order.")
+
+```html
+<p class="woocommerce-order-data__meta order_number">
+  Payment via Direct bank transfer. Paid on November 24, 2021 @ 9:33 pm
+</p>
 ```
 
-### More Information
+Created in `WC_Meta_Box_Order_Data::output()` ([class-wc-meta-box-order-data.php:196](https://github.com/woocommerce/woocommerce/blob/e730f7463c25b50258e97bf56e31e9d7d3bc7ae7/includes/admin/meta-boxes/class-wc-meta-box-order-data.php#L196-L199))
 
-See [github.com/BrianHenryIE/WordPress-Plugin-Boilerplate](https://github.com/BrianHenryIE/WordPress-Plugin-Boilerplate) for initial setup rationale. 
+The standard edit icon for Billing and Shipping is addded with:
 
-# Acknowledgements
+```html
+<a href="#" class="edit_address">Edit</a>
+```
+
+## Solution
+
+This plugin first adds the edit icon beside the order's payment gateway details:
+
+![New Edit Icon](./assets/new-edit-icon.png "The first UI for the new functionailty")
+
+This is the existing style of modals on the order edit page:
+
+![Standard WC modal](./assets/standard-wc-backbone-modal.png "Existing modal to replicate")
+
+Using WooCommere's `WCBackboneModal` ([backbone-modal.js](https://github.com/woocommerce/woocommerce/blob/5.9.0/assets/js/admin/backbone-modal.js)), which mostly just needs a template and callbacks supplied, I created:
+
+
+
+![New solution](./assets/change-payment-gateway.gif "A modal to allow changing the payment gateway")
+
+

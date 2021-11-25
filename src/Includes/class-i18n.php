@@ -8,8 +8,7 @@
  * @link       http://example.com
  * @since      1.0.0
  *
- * @package    BH_WC_Change_Order_Payment_Gateway
- * @subpackage BH_WC_Change_Order_Payment_Gateway/includes
+ * @package brianhenryie/wc-change-order-payment-gateway
  */
 
 namespace BrianHenryIE\WC_Change_Order_Payment_Gateway\Includes;
@@ -21,8 +20,7 @@ namespace BrianHenryIE\WC_Change_Order_Payment_Gateway\Includes;
  * so that it is ready for translation.
  *
  * @since      1.0.0
- * @package    BH_WC_Change_Order_Payment_Gateway
- * @subpackage BH_WC_Change_Order_Payment_Gateway/includes
+ * @package brianhenryie/wc-change-order-payment-gateway
  * @author     BrianHenryIE <BrianHenryIE@gmail.com>
  */
 class I18n {
@@ -39,7 +37,7 @@ class I18n {
 		load_plugin_textdomain(
 			'bh-wc-change-order-payment-gateway',
 			false,
-            plugin_basename( dirname( __FILE__, 2 ) ) . '/languages/'
+			plugin_basename( dirname( __FILE__, 2 ) ) . '/languages/'
 		);
 
 	}

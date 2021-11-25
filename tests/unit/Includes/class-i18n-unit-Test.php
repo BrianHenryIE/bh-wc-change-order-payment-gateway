@@ -11,12 +11,12 @@ namespace BrianHenryIE\WC_Change_Order_Payment_Gateway\Includes;
 /**
  * Class Plugin_WP_Mock_Test
  *
- * @coversDefaultClass \BH_WC_Change_Order_Payment_Gateway\Includes\I18n
+ * @coversDefaultClass \BrianHenryIE\WC_Change_Order_Payment_Gateway\Includes\I18n
  */
 class I18n_Unit_Test extends \Codeception\Test\Unit {
 
 	protected function setup(): void {
-	    parent::setup();
+		parent::setup();
 		\WP_Mock::setUp();
 	}
 
@@ -34,30 +34,30 @@ class I18n_Unit_Test extends \Codeception\Test\Unit {
 
 		global $plugin_root_dir;
 
-        \WP_Mock::userFunction(
-            'plugin_basename',
-            array(
-                'args'   => array(
-                    \WP_Mock\Functions::type( 'string' )
-                ),
-                'return' => 'bh-wc-change-order-payment-gateway',
-                'times' => 1
-            )
-        );
-
-        \WP_Mock::userFunction(
-			'load_plugin_textdomain',
+		\WP_Mock::userFunction(
+			'plugin_basename',
 			array(
-                'times' => 1,
 				'args'   => array(
-					'bh-wc-change-order-payment-gateway',
-					false,
-					'bh-wc-change-order-payment-gateway/languages/',
-				)
+					\WP_Mock\Functions::type( 'string' ),
+				),
+				'return' => 'bh-wc-change-order-payment-gateway',
+				'times'  => 1,
 			)
 		);
 
-        $i18n = new I18n();
-        $i18n->load_plugin_textdomain();
+		\WP_Mock::userFunction(
+			'load_plugin_textdomain',
+			array(
+				'times' => 1,
+				'args'  => array(
+					'bh-wc-change-order-payment-gateway',
+					false,
+					'bh-wc-change-order-payment-gateway/languages/',
+				),
+			)
+		);
+
+		$i18n = new I18n();
+		$i18n->load_plugin_textdomain();
 	}
 }

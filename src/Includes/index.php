@@ -2,7 +2,7 @@
 /**
  * Silence is golden.
  *
- * @package    BH_WC_Change_Order_Payment_Gateway
+ * @package brianhenryie/wc-change-order-payment-gateway
  */
 
 die();

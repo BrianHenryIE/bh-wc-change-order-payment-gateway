@@ -1,24 +1,28 @@
 <?php
 /**
- * Tests for Admin.
+ * Tests for WooCommerce.
  *
- * @see Admin
+ * @see Admin_Order_UI
  *
  * @package bh-wc-change-order-payment-gateway
  * @author Brian Henry <BrianHenryIE@gmail.com>
  */
 
-namespace BrianHenryIE\WC_Change_Order_Payment_Gateway\Admin;
+namespace BrianHenryIE\WC_Change_Order_Payment_Gateway\WooCommerce;
+
+use BrianHenryIE\ColorLogger\ColorLogger;
+use BrianHenryIE\WC_Change_Order_Payment_Gateway\API\Settings_Interface;
+use BrianHenryIE\WC_Change_Order_Payment_Gateway\WooCommerce\Admin_Order_UI;
 
 /**
  * Class Admin_Test
  *
- * @coversDefaultClass \BH_WC_Change_Order_Payment_Gateway\Admin\Admin
+ * @coversDefaultClass \BrianHenryIE\WC_Change_Order_Payment_Gateway\WooCommerce\Admin_Order_UI
  */
-class Admin_Test extends \Codeception\Test\Unit {
+class Admin_Order_UI_Test extends \Codeception\Test\Unit {
 
 	protected function setup(): void {
-	    parent::setup();
+		parent::setup();
 		\WP_Mock::setUp();
 	}
 
@@ -56,11 +60,11 @@ class Admin_Test extends \Codeception\Test\Unit {
 		\WP_Mock::userFunction(
 			'plugin_dir_url',
 			array(
-				'return' => $plugin_root_dir . '/admin/',
+				'return' => $plugin_root_dir . '/WooCommerce/',
 			)
 		);
 
-		$css_file = $plugin_root_dir . '/admin/css/bh-wc-change-order-payment-gateway-admin.css';
+		$css_file = $plugin_root_dir . '/WooCommerce/css/bh-wc-change-order-payment-gateway-admin.css';
 
 		\WP_Mock::userFunction(
 			'wp_enqueue_style',
@@ -70,7 +74,9 @@ class Admin_Test extends \Codeception\Test\Unit {
 			)
 		);
 
-		$admin = new Admin();
+		$settings = $this->makeEmpty( Settings_Interface::class, array( 'get_plugin_version' => $this->version ) );
+		$logger   = new ColorLogger();
+		$admin    = new Admin_Order_UI( $settings, $logger );
 
 		$admin->enqueue_styles();
 
@@ -92,12 +98,12 @@ class Admin_Test extends \Codeception\Test\Unit {
 		\WP_Mock::userFunction(
 			'plugin_dir_url',
 			array(
-				'return' => $plugin_root_dir . '/admin/',
+				'return' => $plugin_root_dir . '/WooCommerce/',
 			)
 		);
 
 		$handle    = $this->plugin_name;
-		$src       = $plugin_root_dir . '/admin/js/bh-wc-change-order-payment-gateway-admin.js';
+		$src       = $plugin_root_dir . '/WooCommerce/js/bh-wc-change-order-payment-gateway-admin.js';
 		$deps      = array( 'jquery' );
 		$ver       = $this->version;
 		$in_footer = true;
@@ -110,7 +116,32 @@ class Admin_Test extends \Codeception\Test\Unit {
 			)
 		);
 
-		$admin = new Admin( $this->plugin_name, $this->version );
+		\WP_Mock::userFunction(
+			'wp_nonce_field'
+		);
+		$mock = new class() {
+			public function payment_gateways() {
+				return new class() {
+					public function payment_gateways() {
+						return array();
+					}
+				};
+			}
+		};
+		\WP_Mock::userFunction(
+			'WC',
+			array(
+				'return' => $mock,
+
+			)
+		);
+		\WP_Mock::userFunction(
+			'wp_add_inline_script'
+		);
+
+		$settings = $this->makeEmpty( Settings_Interface::class, array( 'get_plugin_version' => $this->version ) );
+		$logger   = new ColorLogger();
+		$admin    = new Admin_Order_UI( $settings, $logger );
 
 		$admin->enqueue_scripts();
 

@@ -1,12 +1,13 @@
-<?php 
+<?php
 
-class PluginsPageCest
-{
+class PluginsPageCest {
 
 	/**
 	 * Login and navigate to plugins.php.
 	 *
-	 * @param AcceptanceTester $I
+	 * @param AcceptanceTester $I The Codeception tester.
+	 *
+	 * phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
 	 */
 	public function _before( AcceptanceTester $I ) {
 		$I->loginAsAdmin();
@@ -17,7 +18,7 @@ class PluginsPageCest
 	/**
 	 * Verify the name of the plugin has been set.
 	 *
-	 * @param AcceptanceTester $I
+	 * @param AcceptanceTester $I The tester.
 	 */
 	public function testPluginsPageForName( AcceptanceTester $I ) {
 
@@ -27,7 +28,7 @@ class PluginsPageCest
 	/**
 	 * Check the description displayed on plugins.php has been changed from the default.
 	 *
-	 * @param AcceptanceTester $I
+	 * @param AcceptanceTester $I The tester.
 	 */
 	public function testPluginDescriptionHasBeenSet( AcceptanceTester $I ) {
 

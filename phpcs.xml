@@ -53,5 +53,9 @@
     <rule ref="WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase">
         <exclude-pattern>*/tests/acceptance/*</exclude-pattern>
     </rule>
+    <rule ref="WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid">
+        <exclude-pattern>*/tests/acceptance/*</exclude-pattern>
+    </rule>
+
 
 </ruleset>

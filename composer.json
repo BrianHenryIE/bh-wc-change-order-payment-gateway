@@ -25,11 +25,24 @@
             "type": "git"
         },
         {
+            "type": "path",
+            "url": "../bh-wp-logger"
+        },
+        {
+            "url": "https://github.com/BrianHenryIE/bh-wp-logger",
+            "type": "git"
+        },
+        {
+            "url": "https://github.com/BrianHenryIE/admin-notices",
+            "type": "git"
+        },
+        {
             "type":"composer",
             "url":"https://wpackagist.org"
         }
     ],
     "require": {
+        "brianhenryie/wp-logger": "dev-master",
         "php": ">=7.4",
         "pablo-sg-pacheco/wp-namespace-autoloader": "*"
     },
@@ -75,7 +88,7 @@
             }
         },
         "strauss": {
-            "namespace_prefix": "BH_WC_Change_Order_Payment_Gateway\\",
+            "namespace_prefix": "BrianHenryIE\\WC_Change_Order_Payment_Gateway\\",
             "target_directory": "/src/strauss/",
             "classmap_prefix": "BH_WC_Change_Order_Payment_Gateway_",
             "override_autoload": {
